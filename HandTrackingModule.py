@@ -1,12 +1,13 @@
 import cv2
 import mediapipe as mp
+
 import time
 
 
 
 class handDetector():
     def __init__(self,mode  = False,
-                 max_num_hands: int = 2,
+                 max_num_hands: int = 4,
                  model_complexity: int = 1,
                  min_detection_confidence: float = 0.5,
                  min_tracking_confidence: float = 0.5) :
@@ -44,7 +45,7 @@ class handDetector():
                 cx, cy = int(lm.x * w), int(lm.y * h)
                 lmList.append([id, cx, cy])
                 if draw:
-                    cv2.circle(img, (cx, cy), 8, (255, 0, 255), cv2.FILLED)
+                    cv2.circle(img, (cx, cy), 6, (255, 0, 255), cv2.FILLED)
 
         return lmList
 
