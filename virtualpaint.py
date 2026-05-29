@@ -45,6 +45,7 @@ while True:
         #position of tip of index and middle finger
         x1, y1 = lmList[8][1:]
         x2, y2 = lmList[12][1:]
+        x3, y3 = lmList[4][1:]
 
         #3 checking which finger is up
         fingers = detector.fingerUp()
@@ -52,6 +53,10 @@ while True:
 
 
         #4 if selection mode 2 fingers are up
+        if fingers[0]==1 and fingers[1]==1 and fingers[2]==0 and fingers[3]==0:
+            brushthickness=brushthickness+1
+        if fingers[4]==1 and fingers[1]==0 and fingers[2]==0 and fingers[3]==0:
+            brushthickness=brushthickness-1
 
         if fingers[1] == 1 and fingers[2] == 1 and fingers[3] == 0 and fingers[4] == 0:
             print("selection mode")
@@ -74,6 +79,7 @@ while True:
                     header=overLayList[3]
                     drawcolor = (0, 0, 0)
                     brushthickness=50
+
 
 
 
