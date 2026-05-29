@@ -5,6 +5,7 @@ import time
 
 
 
+
 class handDetector():
     def __init__(self,mode  = False,
                  max_num_hands: int = 4,
@@ -16,6 +17,8 @@ class handDetector():
         self.model_complexity = model_complexity
         self.min_detection_confidence = min_detection_confidence
         self.min_tracking_confidence = min_tracking_confidence
+
+        self.tips=[4,8,12,16,20]
 
         # default code
         self.mpHands = mp.solutions.hands
@@ -33,7 +36,7 @@ class handDetector():
          return img
 
     def findposition(self, img, handNo=0, draw=True):
-        lmList = []
+        self.lmList = []
 
         # PEHLE CHECK KARO: Kya MediaPipe ko koi haath mila?
         if self.results.multi_hand_landmarks:
@@ -43,11 +46,29 @@ class handDetector():
             for id, lm in enumerate(myHand.landmark):
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
-                lmList.append([id, cx, cy])
+                self.lmList.append([id, cx, cy])
                 if draw:
                     cv2.circle(img, (cx, cy), 6, (255, 0, 255), cv2.FILLED)
 
-        return lmList
+        return self.lmList
+
+
+    def  fingerUp(self):
+        fingers=[]
+
+        # for thumb
+        if self.lmList[self.tips[0]][1] > self.lmList[self.tips[0]-1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+        #for fingers
+        for id in range(1,5):
+            if self.lmList[self.tips[id]][2] < self.lmList[self.tips[id]-2][2]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+
+        return fingers
 
 
 
