@@ -13,6 +13,8 @@ brushthickness =15
 folderPath= "header"
 myList = os.listdir(folderPath)
 overLayList = []
+saved = False
+# saveMessageTime=0
 
 
 
@@ -21,7 +23,7 @@ for imgPath in myList:
     overLayList.append(image)
 
 header=overLayList[0]  #screen par by deafualt start hote he
-drawcolor =(255,0,255)
+drawcolor =(119 , 0, 200)
 xp , yp= 0 ,0
 
 imgCanvas = np.zeros((720,1280,3),np.uint8) # fomed kyuki draw me har baar new frame hone ke baad previous drwaing nhi aa rahi thi
@@ -46,17 +48,37 @@ while True:
         x1, y1 = lmList[8][1:]
         x2, y2 = lmList[12][1:]
         x3, y3 = lmList[4][1:]
+        x4 , y4 =lmList[20][1:]
 
         #3 checking which finger is up
         fingers = detector.fingerUp()
-        # print(fingers)
+        print(fingers)
 
 
         #4 if selection mode 2 fingers are up
         if fingers[0]==1 and fingers[1]==1 and fingers[2]==0 and fingers[3]==0:
             brushthickness=brushthickness+1
         if fingers[4]==1 and fingers[1]==0 and fingers[2]==0 and fingers[3]==0:
-            brushthickness=brushthickness-1
+            brushthickness = max(1, brushthickness - 1)
+            print(brushthickness)
+
+        if fingers == [1, 1, 1, 1, 1] and not saved:
+            cv2.imwrite("Drawing.png", imgCanvas)
+            print("Image Saved")
+
+            saved = True
+            # if time.time() - saveMessageTime < 3:
+            #     cv2.putText(img, "Image Saved!", (400, 650),
+            #                 cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #                 (0, 255, 0), 3)
+
+
+        elif fingers != [1, 1, 1, 1, 1]:
+            saved = False
+
+
+
+
 
         if fingers[1] == 1 and fingers[2] == 1 and fingers[3] == 0 and fingers[4] == 0:
             print("selection mode")
@@ -65,7 +87,7 @@ while True:
             if y1 < 125 :
                 if 250 <x1<450:
                     header=overLayList[0]
-                    drawcolor = (255,0,255)
+                    drawcolor = (119 , 0, 200)
 
                 elif 550 <x1 <750:
                     header=overLayList[1]
@@ -73,7 +95,7 @@ while True:
 
                 elif 800<x1<950:
                     header=overLayList[2]
-                    drawColor = (255, 0, 130)
+                    drawcolor = (255,0,255)
 
                 elif 1050<x1<1200:
                     header=overLayList[3]
@@ -106,7 +128,13 @@ while True:
     img[0:125, 0:1280]=header
 
     img =cv2.addWeighted(img,0.5,imgCanvas,0.5,0)
-
+    cv2.putText(img,
+                f'Thickness: {brushthickness}',
+                (900, 680),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (255, 255, 255),
+                2)
 
     cv2.imshow('img',img)
     cv2.imshow('Canvas', imgCanvas)
