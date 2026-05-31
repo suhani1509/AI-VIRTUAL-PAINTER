@@ -55,12 +55,23 @@ class handDetector():
 
     def  fingerUp(self):
         fingers=[]
+        hand_type = "Right"  # Default fallback
+        if self.results.multi_handedness:
+            # Hum pehle hand (handNo=0) ka label nikaal rahe hain
+            hand_type = self.results.multi_handedness[0].classification[0].label
 
         # for thumb
-        if self.lmList[self.tips[0]][1] > self.lmList[self.tips[0]-1][1]:
-            fingers.append(1)
-        else:
-            fingers.append(0)
+        if hand_type == "Right":
+            if self.lmList[self.tips[0]][1] < self.lmList[self.tips[0] - 1][1]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+        else:  # Agar 'Left' hand detect hua (Flipped Right Hand)
+            if self.lmList[self.tips[0]][1] > self.lmList[self.tips[0] - 1][1]:  # dhyan do, yahan '<' ho gaya
+                fingers.append(1)
+            else:
+                fingers.append(0)
+
         #for fingers
         for id in range(1,5):
             if self.lmList[self.tips[id]][2] < self.lmList[self.tips[id]-2][2]:
