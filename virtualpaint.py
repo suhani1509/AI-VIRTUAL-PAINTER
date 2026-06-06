@@ -1,6 +1,6 @@
 import math
 from email import header
-
+# from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
 import time
@@ -10,6 +10,10 @@ import HandTrackingModule as htm
 #########################
 brushthickness =15
 #####################
+#
+# gesture_model = load_model('gesture_model.h5')
+# gesture_names = ['palm', 'l', 'fist', 'fist_moved', 'thumb',
+#                  'index', 'ok', 'palm_moved', 'c', 'down']
 
 folderPath= "header"
 myList = os.listdir(folderPath)
@@ -38,6 +42,9 @@ while True:
     success , img = cap.read()
     if not success:
         break
+
+    img = cv2.resize(img, (1280, 720))
+
 
     img=cv2.flip(img,1)
 
