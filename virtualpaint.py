@@ -164,6 +164,7 @@ while True:
     #setting the header image in video ,,,frame set ho rahe hai img variable me and header img is saved in header
     img[0:125, 0:1280]=header
 
+
     # img =cv2.addWeighted(img,0.5,imgCanvas,0.5,0)
     img = cv2.addWeighted(img, 1, imgCanvas, 0.2, 0)
     cv2.putText(img,
