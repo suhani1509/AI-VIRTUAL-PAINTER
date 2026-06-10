@@ -13,7 +13,9 @@ import HandTrackingModule as htm
 # ═══════════════════════════════════════════════
 
 API_URL = "http://localhost:8000/predict"
-CONFIDENCE_THRESHOLD = 0.75
+CONFIDENCE_THRESHOLD = 0.65
+
+API_CALL_EVERY_N_FRAMES = 3
 BRUSH_THICKNESS = 15
 API_CALL_EVERY_N_FRAMES = 5        # Call API every 5 frames (not 15)
 API_TIMEOUT = 2.0                   # 2 seconds — generous, but runs in background so it doesn't matter
@@ -206,22 +208,31 @@ while True:
         # This fallback now only triggers when confidence is genuinely low,
         # not because the API is blocking/timing out.
         # Naya fallback — jab model confident nahi, MediaPipe sambhal lega
-        if confidence < CONFIDENCE_THRESHOLD:
-            gesture = None
+        # Model ki prediction lo
+        if confidence >= CONFIDENCE_THRESHOLD:
+            # Model confident hai — use karo
+            # BUT verify karo fingers se
+            if gesture == "index" and fingers != [0, 1, 0, 0, 0]:
+                gesture = None  # Model galat bol raha hai, fingers sahi hain
+            elif gesture == "l" and fingers != [0, 1, 1, 0, 0]:
+                gesture = None
+            elif gesture == "palm" and fingers[1:] != [1, 1, 1, 1]:
+                gesture = None
+            elif gesture == "ok" and fingers != [0, 1, 1, 1, 0]:
+                gesture = None
+
+        # Agar model ne galat bola ya confident nahi tha — fingers se lo
+        if gesture is None or confidence < CONFIDENCE_THRESHOLD:
             if fingers == [0, 1, 0, 0, 0]:
-                gesture = "index"
+                gesture = "index"  # 1 finger = draw
             elif fingers == [0, 1, 1, 0, 0]:
-                gesture = "l"
+                gesture = "l"  # 2 fingers = select
             elif fingers == [1, 1, 1, 1, 1]:
-                gesture = "palm"
-            elif fingers == [1, 1, 1, 1, 0]:
-                gesture = "palm"
-            elif fingers == [0, 0, 0, 0, 0]:
-                gesture = "fist"
-            elif fingers == [1, 1, 0, 0, 1]:
-                gesture = "ok"  # approximate
-            elif fingers == [1, 0, 0, 0, 0]:
-                gesture = "thumb"
+                gesture = "palm"  # 5 fingers = clear
+            elif fingers == [0, 1, 1, 1, 0]:
+                gesture = "ok"  # 3 fingers = save
+            else:
+                gesture = None
 
         # ── Gesture Actions ──────────────────────
 
