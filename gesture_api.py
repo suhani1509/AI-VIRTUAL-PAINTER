@@ -16,6 +16,11 @@ import cv2
 import tensorflow as tf
 import pickle
 import uvicorn
+import keras
+
+
+print("TF:", tf.__version__)
+print("Keras:", keras.__version__)
 
 # ═══════════════════════════════════════
 # APP SETUP
@@ -36,12 +41,30 @@ app.add_middleware(
 
 print("Model load ho raha hai...")
 
-model = tf.keras.models.load_model("gesture_model.h5")
+model = tf.saved_model.load(
+    "gesture_saved_model"
+)
 
-with open("label_encoder.pkl", "rb") as f:
-    le = pickle.load(f)
+infer = model.signatures["serving_default"]
 
-print(f"Model ready! Classes: {list(le.classes_)}")
+classes = [
+'palm',
+'l',
+'fist',
+'fist_moved',
+'thumb',
+'index',
+'ok',
+'palm_moved',
+'c',
+'down'
+]
+
+print(
+"Model ready!"
+)
+
+print(classes)
 
 # ═══════════════════════════════════════
 # RESPONSE SCHEMA
@@ -88,10 +111,16 @@ async def predict(file: UploadFile = File(...)):
     input_arr  = np.expand_dims(normalized, axis=0)  # (1, 64, 64, 3)
 
     # Predict
-    predictions = model.predict(input_arr, verbose=0)[0]
+    output = infer(
+        tf.constant(input_arr)
+    )
+
+    predictions = list(output.values())[0].numpy()[0]
     class_idx   = int(np.argmax(predictions))
     confidence  = float(predictions[class_idx])
-    gesture     = le.inverse_transform([class_idx])[0]
+    gesture = classes[
+        class_idx
+    ]
 
     return GestureResponse(gesture=gesture, confidence=confidence)
 

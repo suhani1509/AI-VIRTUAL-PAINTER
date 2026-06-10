@@ -26,6 +26,7 @@ pip install -r requirements.txt
 
 ### 3. Download the trained model
 👉 [Download gesture_model.h5 from Google Drive](https://drive.google.com/drive/folders/1FYDTZJ86w6OIqAhViL2ucijTAPCvaOlh?usp=drive_link)
+- `label_encoder.pkl` is included in the repo
 
 Place `gesture_model.h5` in the project root folder.
 

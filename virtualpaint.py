@@ -1,9 +1,16 @@
+# ✅ 1. Research karo — konse packages chahiye
+# ✅ 2. Compatible versions dhundo
+# ✅ 3. requirements.txt banao == ke saath
+# ✅ 4. .venv banao
+# ✅ 5. pip install -r requirements.txt
+# ✅ 6. TAB code likhna shuru karo
 import math
 from email import header
 # from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
 import time
+import requests
 import os
 import HandTrackingModule as htm
 
