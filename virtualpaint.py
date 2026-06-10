@@ -13,7 +13,7 @@ import HandTrackingModule as htm
 # ═══════════════════════════════════════════════
 
 API_URL = "http://localhost:8000/predict"
-CONFIDENCE_THRESHOLD = 0.65
+CONFIDENCE_THRESHOLD = 0.75
 BRUSH_THICKNESS = 15
 API_CALL_EVERY_N_FRAMES = 5        # Call API every 5 frames (not 15)
 API_TIMEOUT = 2.0                   # 2 seconds — generous, but runs in background so it doesn't matter
@@ -205,6 +205,7 @@ while True:
         # ── Fallback: use finger logic ONLY if model is uncertain ──
         # This fallback now only triggers when confidence is genuinely low,
         # not because the API is blocking/timing out.
+        # Naya fallback — jab model confident nahi, MediaPipe sambhal lega
         if confidence < CONFIDENCE_THRESHOLD:
             gesture = None
             if fingers == [0, 1, 0, 0, 0]:
@@ -213,6 +214,14 @@ while True:
                 gesture = "l"
             elif fingers == [1, 1, 1, 1, 1]:
                 gesture = "palm"
+            elif fingers == [1, 1, 1, 1, 0]:
+                gesture = "palm"
+            elif fingers == [0, 0, 0, 0, 0]:
+                gesture = "fist"
+            elif fingers == [1, 1, 0, 0, 1]:
+                gesture = "ok"  # approximate
+            elif fingers == [1, 0, 0, 0, 0]:
+                gesture = "thumb"
 
         # ── Gesture Actions ──────────────────────
 
