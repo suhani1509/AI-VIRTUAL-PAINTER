@@ -1,10 +1,3 @@
-"""
-virtualpaint.py — Optimized Virtual Paint
-==========================================
-Key Fix: API calls happen in a BACKGROUND THREAD.
-The main camera loop NEVER blocks/waits for the API response.
-Gesture result is shared via a thread-safe object.
-"""
 
 import math
 import cv2
